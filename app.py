@@ -83,10 +83,10 @@ def crear_nota(producto: ProductoSchema, db = Depends(get_db), Session = Depends
     return nuevo_producto
 
 @app.put("/actualzar_producto/{id}")
-def actualizar(id:int, db = Depends(get_db),data = ProductoSchema ,token:str = Depends(verificar_token)):
+def actualizar(id:int, precio: float, db = Depends(get_db) ,Session = Depends(verificar_token)):
     producto = db.query(ProductosDB).filter(ProductosDB.id == id).first()
     if producto:
-        producto.precio = data.precio
+        producto.precio = precio
         db.commit()
         db.refresh(producto)
         return "Producto actualizado"
