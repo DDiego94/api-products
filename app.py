@@ -71,10 +71,11 @@ def listar_productos(db = Depends(get_db), token: str = Depends(verificar_token)
 
 # Ruta para crear productos
 @app.post("/nuevo_producto")
-def crear_nota(producto: ProductoSchema, db = Depends(get_db), token: str = Depends(verificar_token)):
+def crear_nota(producto: ProductoSchema, db = Depends(get_db), Session = Depends(verificar_token)):
     nuevo_producto = ProductosDB(
         nombre=producto.nombre,
         descripcion=producto.descripcion,
+        precio=producto.precio
     )
     db.add(nuevo_producto)
     db.commit()
@@ -85,7 +86,6 @@ def crear_nota(producto: ProductoSchema, db = Depends(get_db), token: str = Depe
 def actualizar(id:int, db = Depends(get_db),data = ProductoSchema ,token:str = Depends(verificar_token)):
     producto = db.query(ProductosDB).filter(ProductosDB.id == id).first()
     if producto:
-        producto.nombre = data.nombre
         producto.precio = data.precio
         db.commit()
         db.refresh(producto)
