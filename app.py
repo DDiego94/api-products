@@ -60,17 +60,12 @@ def inicio():
 
 # Ruta para listar productos
 @app.get("/productos")
-def listar_productos(db = Depends(get_db), token: str = Depends(verificar_token)):
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="No estás autenticado",
-        )
+def listar_productos(db = Depends(get_db), Session = Depends(verificar_token)):
     productos = db.query(ProductosDB).all()
     return productos
 
 # Ruta para crear productos
-@app.post("/nuevo_producto")
+@app.post("/productos")
 def crear_nota(producto: ProductoSchema, db = Depends(get_db), Session = Depends(verificar_token)):
     nuevo_producto = ProductosDB(
         nombre=producto.nombre,
@@ -82,7 +77,7 @@ def crear_nota(producto: ProductoSchema, db = Depends(get_db), Session = Depends
     db.refresh(nuevo_producto)
     return nuevo_producto
 
-@app.put("/actualzar_producto/{id}")
+@app.put("/productos/{id}")
 def actualizar(id:int, precio: float, db = Depends(get_db) ,Session = Depends(verificar_token)):
     producto = db.query(ProductosDB).filter(ProductosDB.id == id).first()
     if producto:
